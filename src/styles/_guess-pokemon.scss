@@ -6,4 +6,7 @@ body {
     margin: 0;
     background-color: variables.$theme-background-color__primary;
     color: var(--text);
+    background-image: url("../images/pokemon.png");
+    background-size: cover;
+    background-repeat: no-repeat;
 }
