@@ -2,8 +2,15 @@ const path = require('path');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 module.exports = {
+    mode: isDevelopment ? 'development' : 'production',
+    
+    devServer: {
+        hot: true,
+    },
 
     entry: {
         bundle: path.resolve(__dirname, './src/index.js')
@@ -22,7 +29,8 @@ module.exports = {
         }),
         
         new MiniCssExtractPlugin(),
-    ],
+        isDevelopment && new ReactRefreshWebpackPlugin(),
+    ].filter(Boolean),
 
     devtool: "source-map",
 
@@ -46,15 +54,17 @@ module.exports = {
                 ]
             },
             {
-                test: /\.js$/,
+                test: /\.[jt]sx?$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env', '@babel/preset-react']
-                    }
-                }
-            }
+                    loader: require.resolve('babel-loader'),
+                        options: {
+                            presets: ['@babel/preset-env', '@babel/preset-react'],
+                            plugins: [isDevelopment && require.resolve('react-refresh/babel')].filter(Boolean),
+                        },
+                    },
+                
+            },
         ]
     }
 }
